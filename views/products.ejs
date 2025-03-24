@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Products List</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<header>
+    <div class="logo">KiwiScents</div>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/products">Fragrances</a></li>
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/cart">Your Cart</a></li>
+        </ul>
+    </nav>
+</header>
+<body>
+    <h1>Available Products</h1>
+    <table border="1">
+        <tr>
+            <th>Stock_ID</th>
+            <th>Scents</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Ingredients</th>
+            <th>Gender</th>
+        </tr>
+        <% products.forEach(product => { %>
+            <tr>
+                <td><%= product.stock_id %></td>
+                <td><%= product.scents %></td>
+                <td>$<%= product.price %></td>
+                <td><%= product.quantity %></td>
+                <td><%= product.description %></td>
+                <td><%= product.category %></td>
+                <td><%= product.Ingredients %></td>
+                <td><%= product.gender %></td>
+            </tr>
+        <% }); %>
+    </table>
+</body>
+</html>

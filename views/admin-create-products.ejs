@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Add Product</title>
+</head>
+<body>
+
+    <h2>Add a New Product</h2>
+
+    <form action="/add-product" method="POST">
+        <label for="stock_id">Stock ID:</label>
+        <input type="number" id="stock_id" name="stock_id" required>
+
+        <label for="scents">scents:</label>
+        <textarea id="text" name="scents" required></textarea>
+
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" required>
+
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" required>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required></textarea>
+
+        <label for="category">Category:</label>
+        <input type="text" id="category" name="category" required>
+
+        <label for="ingredients">Ingredients:</label>
+        <textarea id="ingredients" name="ingredients" required></textarea>
+
+        <label for="gender">Gender:</label>
+        <select id="gender" name="gender" required>
+            <option value="">Select</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Unisex">Unisex</option>
+        </select>
+
+        <button type="submit">Add Product</button>
+    </form>
+
+</body>
+</html>
