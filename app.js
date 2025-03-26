@@ -26,6 +26,16 @@ app.get("/about", (req, res) => {
   res.render("about");
 });
 
+app.get("/products", (req, res) => {
+  res.render("products");
+});
+
+
+app.get("/find-your-fragrance", (req, res) => {
+  res.render("find-your-fragrance");
+});
+
+
 app.get("/cart", (req, res) => {
   res.render("cart");
 });
@@ -33,15 +43,14 @@ app.get("/cart", (req, res) => {
 
 
 
-
 // Display all products
-app.get("/products", (req, res) => {
+app.get("/products-list", (req, res) => {
   db.all("SELECT * FROM products", [], (err, rows) => {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
     }
-    res.render("products", { products: rows });
+    res.render("products-list", { products: rows });
   });
 });
 
@@ -64,6 +73,17 @@ app.get("/manage-products", (req, res) => {
   });
 });
 
+app.get('/admin-manage-products', (req, res) => {
+  // Fetch products from your database
+  db.query('SELECT * FROM products', (err, products) => {
+      if (err) {
+          console.error(err);
+          return res.status(500).send('Database error');
+      }
+      res.render('manage-products', { products }); // Ensure 'manage-products.ejs' exists
+  });
+});
+
 // Handle form submission from /admin-products
 app.post("/add-product", (req, res) => {
   const { stock_id, price, quantity, description, category, ingredients, gender } = req.body;
@@ -80,7 +100,7 @@ app.post("/add-product", (req, res) => {
     if (err) {
       return res.status(500).send("Error inserting data: " + err.message);
     }
-    res.redirect("/products"); // Redirect to products page after submission
+    res.redirect("/products-list"); // Redirect to products page after submission
   });
 });
 
@@ -100,7 +120,7 @@ app.post("/update-product", (req, res) => {
     if (err) {
       return res.status(500).send("Error updating product: " + err.message);
     }
-    res.redirect("/admin-manage-products");
+    res.redirect("/manage-products");
   });
 });
 
@@ -115,7 +135,7 @@ app.post("/delete-product", (req, res) => {
     if (err) {
       return res.status(500).send("Error deleting product: " + err.message);
     }
-    res.redirect("/admin-manage-products");
+    res.redirect("/manage-products");
   });
 });
 

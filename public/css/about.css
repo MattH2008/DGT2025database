@@ -1,0 +1,25 @@
+.about-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #111;
+    color: #5ff491;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 255, 128, 0.5);
+}
+
+.about-container h1, 
+.about-container h2 {
+    text-align: center;
+    color: #5ff491;
+}
+
+.about-container ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.about-container ul li {
+    padding: 5px 0;
+    font-size: 18px;
+}
