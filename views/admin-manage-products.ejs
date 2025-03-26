@@ -1,64 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="/css/manage-products.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Products</title>
 </head>
+<header>
+    <div class="logo">KiwiScents</div>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/products">Fragrances</a></li>
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/admin">Admin</a></li>
+            <li><a href="/cart">Your Cart</a></li>
+        </ul>
+    </nav>
+</header>
 <body>
 
-    <h2>Manage Products</h2>
 
-    <table border="1">
-        <tr>
-            <th>Stock ID</th>
-            <th>Scents</th> 
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Description</th>
-            <th>Category</th>
-            <th>Ingredients</th>
-            <th>Gender</th>
-            <th>Actions</th>
-        </tr>
-
-        <% products.forEach(product => { %>
+    <div class="manage-products-container">
+        <h2>Manage Products</h2>
+    
+        <table class="manage-products-table">
             <tr>
-                <td><%= product.stock_id %></td>
-                <td><%= product.scents %></td> 
-                <td><%= product.price %></td>
-                <td><%= product.quantity %></td>
-                <td><%= product.description %></td>
-                <td><%= product.category %></td>
-                <td><%= product.ingredients %></td>
-                <td><%= product.gender %></td>
-                <td>
-                    <!-- Update Form -->
-                    <form action="/update-product" method="POST">
-                        <input type="hidden" name="stock_id" value="<%= product.stock_id %>">
-                        <input type="text" name="scents" value="<%= product.scents %>" required> 
-                        <input type="number" name="price" value="<%= product.price %>" required>
-                        <input type="number" name="quantity" value="<%= product.quantity %>" required>
-                        <input type="text" name="description" value="<%= product.description %>" required>
-                        <input type="text" name="category" value="<%= product.category %>" required>
-                        <input type="text" name="ingredients" value="<%= product.ingredients %>" required>
-                        <select name="gender" required>
-                            <option value="Male" <%= product.gender === "Male" ? "selected" : "" %>>Male</option>
-                            <option value="Female" <%= product.gender === "Female" ? "selected" : "" %>>Female</option>
-                            <option value="Unisex" <%= product.gender === "Unisex" ? "selected" : "" %>>Unisex</option>
-                        </select>
-                        <button type="submit">Update</button>
-                    </form>
-
-                    <!-- Delete Form -->
-                    <form action="/delete-product" method="POST">
-                        <input type="hidden" name="product_id" value="<%= product.stock_id %>">
-                        <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
-                    </form>
-                </td>
+                <th>Stock ID</th>
+                <th>Scents</th> 
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Ingredients</th>
+                <th>Gender</th>
+                <th>Actions</th>
             </tr>
-        <% }); %>
-    </table>
+    
+            <% products.forEach(product => { %>
+                <tr>
+                    <form action="/update-product" method="POST">
+                        <td>
+                            <input type="hidden" name="stock_id" value="<%= product.stock_id %>">
+                            <%= product.stock_id %>
+                        </td>
+                        <td><input type="text" name="scents" value="<%= product.scents %>" required></td>
+                        <td><input type="number" name="price" value="<%= product.price %>" required></td>
+                        <td><input type="number" name="quantity" value="<%= product.quantity %>" required></td>
+                        <td><input type="text" name="description" value="<%= product.description %>" required></td>
+                        <td><input type="text" name="category" value="<%= product.category %>" required></td>
+                        <td><input type="text" name="ingredients" value="<%= product.ingredients %>" required></td>
+                        <td>
+                            <select name="gender" required>
+                                <option value="Male" <%= product.gender === "Male" ? "selected" : "" %>>Male</option>
+                                <option value="Female" <%= product.gender === "Female" ? "selected" : "" %>>Female</option>
+                                <option value="Unisex" <%= product.gender === "Unisex" ? "selected" : "" %>>Unisex</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button type="submit">Update</button>
+                        </td>
+                    </form>
+                    <td>
+                        <form action="/delete-product" method="POST">
+                            <input type="hidden" name="product_id" value="<%= product.stock_id %>">
+                            <button type="submit" onclick="return confirm('Are you sure?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }); %>
+        </table>
+    </div>
+    
 
 </body>
 </html>
