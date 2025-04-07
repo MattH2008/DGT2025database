@@ -8,6 +8,7 @@ const db = new sqlite3.Database("data.db", (err) => {
         db.run(`
             CREATE TABLE IF NOT EXISTS products (
                 stock_id INTEGER PRIMARY KEY,
+                scents TEXT NOT NULL,
                 price INTEGER NOT NULL,
                 quantity INTEGER NOT NULL,
                 description TEXT NOT NULL,

@@ -1,11 +1,167 @@
-<header>
-    <div class="logo">KiwiScents</div>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/products">Fragrances</a></li>
-            <li><a href="/about">About Us</a></li>
-            <li><a href="/cart">Your Cart</a></li>
-        </ul>
-    </nav>
-</header>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart | KiwiScents</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">KiwiScents</div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Fragrances</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/cart">Your Cart</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Your Shopping Cart</h2>
+        
+        <div id="cart-items-container">
+            <!-- Cart items will be dynamically inserted here -->
+        </div>
+        
+        <div class="cart-actions">
+            <a href="/products" class="btn">Continue Shopping</a>
+            <button id="checkout-btn" class="btn">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get cart items from localStorage
+            let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const cartContainer = document.getElementById('cart-items-container');
+            const checkoutBtn = document.getElementById('checkout-btn');
+            
+            // Function to render the cart
+            function renderCart() {
+                if (cartItems.length === 0) {
+                    cartContainer.innerHTML = '<p>Your cart is currently empty.</p>';
+                    checkoutBtn.disabled = true;
+                } else {
+                    checkoutBtn.disabled = false;
+                    
+                    let cartHTML = `
+                        <table border="1" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Description</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Subtotal</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    
+                    let total = 0;
+                    
+                    cartItems.forEach(item => {
+                        const subtotal = item.price * item.quantity;
+                        total += subtotal;
+                        
+                        cartHTML += `
+                            <tr data-id="${item.id}">
+                                <td>${item.category}</td>
+                                <td>${item.description}</td>
+                                <td>$${item.price.toFixed(2)}</td>
+                                <td>
+                                    <button class="decrease-qty" data-id="${item.id}">-</button>
+                                    <span>${item.quantity}</span>
+                                    <button class="increase-qty" data-id="${item.id}">+</button>
+                                </td>
+                                <td>$${subtotal.toFixed(2)}</td>
+                                <td>
+                                    <button class="remove-item" data-id="${item.id}">Remove</button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    
+                    cartHTML += `
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4" align="right"><strong>Total:</strong></td>
+                                    <td>$${total.toFixed(2)}</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    `;
+                    
+                    cartContainer.innerHTML = cartHTML;
+                    
+                    // Add event listeners for the quantity buttons
+                    document.querySelectorAll('.decrease-qty').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const id = this.getAttribute('data-id');
+                            updateQuantity(id, -1);
+                        });
+                    });
+                    
+                    document.querySelectorAll('.increase-qty').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const id = this.getAttribute('data-id');
+                            updateQuantity(id, 1);
+                        });
+                    });
+                    
+                    document.querySelectorAll('.remove-item').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const id = this.getAttribute('data-id');
+                            removeItem(id);
+                        });
+                    });
+                }
+            }
+            
+            // Function to update quantity
+            function updateQuantity(id, change) {
+                const itemIndex = cartItems.findIndex(item => item.id == id);
+                if (itemIndex !== -1) {
+                    cartItems[itemIndex].quantity += change;
+                    
+                    // Remove item if quantity is 0 or less
+                    if (cartItems[itemIndex].quantity <= 0) {
+                        cartItems.splice(itemIndex, 1);
+                    }
+                    
+                    // Save to localStorage and re-render
+                    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+                    renderCart();
+                }
+            }
+            
+            // Function to remove item
+            function removeItem(id) {
+                cartItems = cartItems.filter(item => item.id != id);
+                localStorage.setItem('cartItems', JSON.stringify(cartItems));
+                renderCart();
+            }
+            
+            // Initial render
+            renderCart();
+            
+            // Checkout button event
+            checkoutBtn.addEventListener('click', function() {
+                if (cartItems.length > 0) {
+                    alert('Thank you for your purchase! Your order has been placed.');
+                    // Clear cart after purchase
+                    localStorage.removeItem('cartItems');
+                    cartItems = [];
+                    renderCart();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

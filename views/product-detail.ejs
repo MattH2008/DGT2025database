@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= product.description %> | KiwiScents</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">KiwiScents</div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Fragrances</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/cart">Your Cart</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="product-detail">
+            <h2><%= product.description %></h2>
+            <p><strong>Category:</strong> <%= product.category %></p>
+            <p><strong>Price:</strong> $<%= product.price %></p>
+            <p><strong>For:</strong> <%= product.gender %></p>
+            <p><strong>Ingredients:</strong> <%= product.ingredients %></p>
+            <p><strong>Available:</strong> <%= product.quantity %> in stock</p>
+            
+            <div class="product-actions">
+                <button class="add-to-cart-btn" data-product-id="<%= product.stock_id %>" 
+                   data-category="<%= product.category %>" 
+                   data-description="<%= product.description %>" 
+                   data-price="<%= product.price %>">
+                   Add to Cart
+                </button>
+                <a href="/products" class="btn">Back to Products</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('.add-to-cart-btn').addEventListener('click', function() {
+            const button = this;
+            const productId = button.getAttribute('data-product-id');
+            const category = button.getAttribute('data-category');
+            const description = button.getAttribute('data-description');
+            const price = parseFloat(button.getAttribute('data-price'));
+            
+            // Get existing cart or create new one
+            let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            
+            // Check if product is already in cart
+            const existingItem = cartItems.find(item => item.id == productId);
+            
+            if (existingItem) {
+                // Increase quantity if already in cart
+                existingItem.quantity += 1;
+            } else {
+                // Add new item to cart
+                cartItems.push({
+                    id: productId,
+                    category: category,
+                    description: description,
+                    price: price,
+                    quantity: 1
+                });
+            }
+            
+            // Save updated cart
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+            
+            // Show confirmation to user
+            alert('Product added to cart!');
+        });
+    </script>
+</body>
+</html>

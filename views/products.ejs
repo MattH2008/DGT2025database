@@ -1,10 +1,94 @@
-<header>
-    <div class="logo">KiwiScents</div>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/products">Fragrances</a></li>
-            <li><a href="/about">About Us</a></li>
-            <li><a href="/cart">Your Cart</a></li>
-        </ul>
-    </nav>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fragrances | KiwiScents</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">KiwiScents</div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Fragrances</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/cart">Your Cart</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Our Fragrances</h2>
+        
+        <div class="products-container">
+            <table border="0">
+                <tr>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>For</th>
+                    <th>Action</th>
+                </tr>
+                <% products.forEach(product => { %>
+                    <tr>
+                        <td><%= product.scents %></td>
+                        <td><%= product.category %></td>
+                        <td>$<%= product.price %></td>
+                        <td><%= product.gender %></td>
+                        <td>
+                            <a href="/products/<%= product.stock_id %>" class="btn">View Details</a>
+                            <button class="add-to-cart-btn" 
+                                data-product-id="<%= product.stock_id %>" 
+                                data-category="<%= product.category %>" 
+                                data-description="<%= product.description %>" 
+                                data-price="<%= product.price %>">
+                                Add to Cart
+                            </button>
+                        </td>
+                    </tr>
+                <% }); %>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Add to cart functionality
+        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.getAttribute('data-product-id');
+                const category = this.getAttribute('data-category');
+                const description = this.getAttribute('data-description');
+                const price = parseFloat(this.getAttribute('data-price'));
+                
+                // Get existing cart or create new one
+                let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+                
+                // Check if product is already in cart
+                const existingItem = cartItems.find(item => item.id == productId);
+                
+                if (existingItem) {
+                    // Increase quantity if already in cart
+                    existingItem.quantity += 1;
+                } else {
+                    // Add new item to cart
+                    cartItems.push({
+                        id: productId,
+                        category: category,
+                        description: description,
+                        price: price,
+                        quantity: 1
+                    });
+                }
+                
+                // Save updated cart
+                localStorage.setItem('cartItems', JSON.stringify(cartItems));
+                
+                // Show confirmation to user
+                alert('Product added to cart!');
+            });
+        });
+    </script>
+</body>
+</html>

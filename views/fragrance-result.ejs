@@ -1,0 +1,47 @@
+<!-- fragrance-result.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Perfect Fragrance</title>
+    <link rel="stylesheet" href="/css/fragrance-result.css">
+</head>
+<body>
+    <header>
+        <div class="logo">KiwiScents</div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Fragrances</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/cart">Your Cart</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Your Perfect Fragrance</h2>
+
+        <% if (fragrances && fragrances.length > 0) { %>
+            <h3>We found <%= fragrances.length %> fragrances that match your preferences:</h3>
+            
+            <div class="fragrances-container">
+                <% fragrances.forEach(fragrance => { %>
+                    <div class="fragrance-card">
+                        <h3><%= fragrance.description %></h3>
+                        <p><strong>Category:</strong> <%= fragrance.category %></p>
+                        <p><strong>Price:</strong> $<%= fragrance.price %></p>
+                        <p><strong>Ingredients:</strong> <%= fragrance.ingredients %></p>
+                        <a href="/products/<%= fragrance.stock_id %>" class="btn">View Product</a>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <p>Sorry, no matching fragrances found within your budget.</p>
+        <% } %>
+        
+        <p><a href="/find-your-fragrance" class="btn">Try Again</a></p>
+    </div>
+</body>
+</html>
