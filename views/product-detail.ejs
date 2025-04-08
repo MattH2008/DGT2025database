@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= product.description %> | KiwiScents</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/product-detail.css">
 </head>
 <body>
     <header>
@@ -21,6 +21,7 @@
 
     <div class="container">
         <div class="product-detail">
+            <h2><%= product.scents %></h2>
             <h2><%= product.description %></h2>
             <p><strong>Category:</strong> <%= product.category %></p>
             <p><strong>Price:</strong> $<%= product.price %></p>
