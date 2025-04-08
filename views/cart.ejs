@@ -30,6 +30,83 @@
             <a href="/products" class="btn">Continue Shopping</a>
             <button id="checkout-btn" class="btn">Proceed to Checkout</button>
         </div>
+
+        <!-- Payment Form (Hidden by default) -->
+        <div id="payment-form-container" style="display:none;">
+            <h3>Checkout</h3>
+            <form id="payment-form">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Shipping Address</label>
+                    <textarea id="address" name="address" required></textarea>
+                </div>
+                
+                <h4>Payment Method</h4>
+                <div class="payment-options">
+                    <div class="payment-option">
+                        <input type="radio" id="payment-credit" name="payment-method" value="credit" checked>
+                        <label for="payment-credit">Credit/Debit Card</label>
+                        
+                        <div class="credit-card-details">
+                            <div class="form-group">
+                                <label for="card-number">Card Number</label>
+                                <input type="text" id="card-number" name="card-number" placeholder="1234 5678 9012 3456" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="expiry">Expiry (MM/YY)</label>
+                                    <input type="text" id="expiry" name="expiry" placeholder="MM/YY" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cvv">CVV</label>
+                                    <input type="text" id="cvv" name="cvv" placeholder="123" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="payment-option">
+                        <input type="radio" id="payment-paypal" name="payment-method" value="paypal">
+                        <label for="payment-paypal">PayPal</label>
+                    </div>
+                    
+                    <div class="payment-option">
+                        <input type="radio" id="payment-bank" name="payment-method" value="bank">
+                        <label for="payment-bank">Direct Bank Transfer</label>
+                    </div>
+                </div>
+                
+                <div id="bank-details" style="display:none;">
+                    <h4>Bank Transfer Details</h4>
+                    <p>Please transfer the total amount to the following bank account:</p>
+                    <p><strong>Bank Name:</strong> Example Bank</p>
+                    <p><strong>Account Name:</strong> KiwiScents Ltd</p>
+                    <p><strong>Account Number:</strong> 12345678</p>
+                    <p><strong>Sort Code:</strong> 12-34-56</p>
+                    <p><strong>Reference:</strong> <span id="order-reference">KS-12345</span></p>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" id="place-order-btn" class="btn">Place Order</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Order Confirmation (Hidden by default) -->
+        <div id="order-confirmation" style="display:none;">
+            <h3>Thank You for Your Order!</h3>
+            <p>Your order has been placed successfully.</p>
+            <p>Order Reference: <span id="confirmation-reference">KS-12345</span></p>
+            <p>We will send you an email confirmation shortly.</p>
+            <a href="/products" class="btn">Continue Shopping</a>
+        </div>
     </div>
 
     <script>
@@ -38,6 +115,9 @@
             let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
             const cartContainer = document.getElementById('cart-items-container');
             const checkoutBtn = document.getElementById('checkout-btn');
+            const paymentForm = document.getElementById('payment-form-container');
+            const orderConfirmation = document.getElementById('order-confirmation');
+            let orderTotal = 0;
             
             // Function to render the cart
             function renderCart() {
@@ -99,6 +179,12 @@
                     `;
                     
                     cartContainer.innerHTML = cartHTML;
+                    orderTotal = total;
+                    
+                    // Generate a unique order reference
+                    const orderRef = 'KS-' + Math.floor(100000 + Math.random() * 900000);
+                    document.getElementById('order-reference').textContent = orderRef;
+                    document.getElementById('confirmation-reference').textContent = orderRef;
                     
                     // Add event listeners for the quantity buttons
                     document.querySelectorAll('.decrease-qty').forEach(button => {
@@ -154,11 +240,53 @@
             // Checkout button event
             checkoutBtn.addEventListener('click', function() {
                 if (cartItems.length > 0) {
-                    alert('Thank you for your purchase! Your order has been placed.');
-                    // Clear cart after purchase
-                    localStorage.removeItem('cartItems');
-                    cartItems = [];
-                    renderCart();
+                    cartContainer.style.display = 'none';
+                    document.querySelector('.cart-actions').style.display = 'none';
+                    paymentForm.style.display = 'block';
+                }
+            });
+            
+            // Payment method selection
+            document.querySelectorAll('input[name="payment-method"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const bankDetails = document.getElementById('bank-details');
+                    if (this.value === 'bank') {
+                        bankDetails.style.display = 'block';
+                    } else {
+                        bankDetails.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Submit payment form
+            document.getElementById('payment-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get payment method
+                const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+                
+                // Here you would typically make an AJAX call to your server to process payment
+                // For this example, we'll just simulate a successful payment
+                
+                if (paymentMethod === 'bank') {
+                    // For bank transfers, just show the confirmation
+                    paymentForm.style.display = 'none';
+                    orderConfirmation.style.display = 'block';
+                } else {
+                    // For other payment methods, simulate processing
+                    const placeOrderBtn = document.getElementById('place-order-btn');
+                    placeOrderBtn.disabled = true;
+                    placeOrderBtn.textContent = 'Processing...';
+                    
+                    // Simulate payment processing with a delay
+                    setTimeout(function() {
+                        paymentForm.style.display = 'none';
+                        orderConfirmation.style.display = 'block';
+                        
+                        // Clear cart after successful purchase
+                        localStorage.removeItem('cartItems');
+                        cartItems = [];
+                    }, 2000);
                 }
             });
         });
