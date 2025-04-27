@@ -112,22 +112,20 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Get cart items from localStorage
             let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
             const cartContainer = document.getElementById('cart-items-container');
             const checkoutBtn = document.getElementById('checkout-btn');
             const paymentForm = document.getElementById('payment-form-container');
             const orderConfirmation = document.getElementById('order-confirmation');
             let orderTotal = 0;
-            
-            // Function to render the cart
+        
             function renderCart() {
                 if (cartItems.length === 0) {
                     cartContainer.innerHTML = '<p>Your cart is currently empty.</p>';
                     checkoutBtn.disabled = true;
                 } else {
                     checkoutBtn.disabled = false;
-                    
+        
                     let cartHTML = `
                         <table border="1" width="100%">
                             <thead>
@@ -142,13 +140,13 @@
                             </thead>
                             <tbody>
                     `;
-                    
+        
                     let total = 0;
-                    
+        
                     cartItems.forEach(item => {
                         const subtotal = item.price * item.quantity;
                         total += subtotal;
-                        
+        
                         cartHTML += `
                             <tr data-id="${item.id}">
                                 <td>${item.category}</td>
@@ -166,7 +164,7 @@
                             </tr>
                         `;
                     });
-                    
+        
                     cartHTML += `
                             </tbody>
                             <tfoot>
@@ -178,30 +176,26 @@
                             </tfoot>
                         </table>
                     `;
-                    
+        
                     cartContainer.innerHTML = cartHTML;
                     orderTotal = total;
-                    
-                    // Generate a unique order reference
-                    const orderRef = 'KS-' + Math.floor(100000 + Math.random() * 900000);
-                    document.getElementById('order-reference').textContent = orderRef;
-                    document.getElementById('confirmation-reference').textContent = orderRef;
-                    
-                    // Add event listeners for the quantity buttons
+        
+                    document.getElementById('confirmation-reference').textContent = 'KS-' + Math.floor(100000 + Math.random() * 900000);
+        
                     document.querySelectorAll('.decrease-qty').forEach(button => {
                         button.addEventListener('click', function() {
                             const id = this.getAttribute('data-id');
                             updateQuantity(id, -1);
                         });
                     });
-                    
+        
                     document.querySelectorAll('.increase-qty').forEach(button => {
                         button.addEventListener('click', function() {
                             const id = this.getAttribute('data-id');
                             updateQuantity(id, 1);
                         });
                     });
-                    
+        
                     document.querySelectorAll('.remove-item').forEach(button => {
                         button.addEventListener('click', function() {
                             const id = this.getAttribute('data-id');
@@ -210,35 +204,27 @@
                     });
                 }
             }
-            
-            // Function to update quantity
+        
             function updateQuantity(id, change) {
                 const itemIndex = cartItems.findIndex(item => item.id == id);
                 if (itemIndex !== -1) {
                     cartItems[itemIndex].quantity += change;
-                    
-                    // Remove item if quantity is 0 or less
                     if (cartItems[itemIndex].quantity <= 0) {
                         cartItems.splice(itemIndex, 1);
                     }
-                    
-                    // Save to localStorage and re-render
                     localStorage.setItem('cartItems', JSON.stringify(cartItems));
                     renderCart();
                 }
             }
-            
-            // Function to remove item
+        
             function removeItem(id) {
                 cartItems = cartItems.filter(item => item.id != id);
                 localStorage.setItem('cartItems', JSON.stringify(cartItems));
                 renderCart();
             }
-            
-            // Initial render
+        
             renderCart();
-            
-            // Checkout button event
+        
             checkoutBtn.addEventListener('click', function() {
                 if (cartItems.length > 0) {
                     cartContainer.style.display = 'none';
@@ -246,8 +232,7 @@
                     paymentForm.style.display = 'block';
                 }
             });
-            
-            // Payment method selection
+        
             document.querySelectorAll('input[name="payment-method"]').forEach(radio => {
                 radio.addEventListener('change', function() {
                     const bankDetails = document.getElementById('bank-details');
@@ -258,39 +243,32 @@
                     }
                 });
             });
-            
-            // Submit payment form
+        
             document.getElementById('payment-form').addEventListener('submit', function(e) {
                 e.preventDefault();
-                
-                // Get payment method
                 const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
-                
-                // Here you would typically make an AJAX call to your server to process payment
-                // For this example, we'll just simulate a successful payment
-                
+                const placeOrderBtn = document.getElementById('place-order-btn');
+        
                 if (paymentMethod === 'bank') {
-                    // For bank transfers, just show the confirmation
+                    // Directly confirm without processing
                     paymentForm.style.display = 'none';
                     orderConfirmation.style.display = 'block';
+                    localStorage.removeItem('cartItems');
+                    cartItems = [];
                 } else {
-                    // For other payment methods, simulate processing
-                    const placeOrderBtn = document.getElementById('place-order-btn');
+                    // Simulate online payment processing
                     placeOrderBtn.disabled = true;
                     placeOrderBtn.textContent = 'Processing...';
-                    
-                    // Simulate payment processing with a delay
                     setTimeout(function() {
                         paymentForm.style.display = 'none';
                         orderConfirmation.style.display = 'block';
-                        
-                        // Clear cart after successful purchase
                         localStorage.removeItem('cartItems');
                         cartItems = [];
                     }, 2000);
                 }
             });
         });
-    </script>
+        </script>
+        
 </body>
 </html>
