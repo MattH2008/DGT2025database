@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head><title>Manage Players</title></head>
+  <body>
+    <h1>Add Player</h1>
+    <form method="POST" action="/crud/add">
+      <input name="name" placeholder="Name" required />
+      <input name="team" placeholder="Team" required />
+      <input name="goals" placeholder="Goals" type="number" required />
+      <button type="submit">Add</button>
+    </form>
+
+    <h2>Current Players</h2>
+    <ul>
+      <% players.forEach(p => { %>
+        <li>
+          <%= p.name %> - <%= p.team %> - <%= p.goals %> goals
+          <form method="POST" action="/crud/delete/<%= p.id %>" style="display:inline;">
+            <button type="submit">Delete</button>
+          </form>
+        </li>
+      <% }) %>
+    </ul>
+
+    <a href="/">Back</a>
+  </body>
+</html>

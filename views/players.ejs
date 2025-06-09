@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head><title>Players</title></head>
+  <body>
+    <h1>All Players</h1>
+    <ul>
+      <% players.forEach(player => { %>
+        <li><%= player.name %> - <%= player.team %> - <%= player.goals %> goals</li>
+      <% }) %>
+    </ul>
+    <a href="/">Back</a>
+  </body>
+</html>
