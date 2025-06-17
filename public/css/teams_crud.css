@@ -1,0 +1,111 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+header {
+  background-color: #1f1f1f;
+  padding: 20px;
+  text-align: center;
+  border-bottom: 2px solid #00ff99;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: #00ff99;
+}
+
+nav {
+  margin-top: 10px;
+}
+
+nav a {
+  color: #ffffff;
+  text-decoration: none;
+  margin: 0 15px;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+nav a:hover {
+  color: #00ff99;
+}
+
+main {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+h2 {
+  color: #00ff99;
+  font-size: 1.6rem;
+  margin-top: 30px;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #00ff99;
+  padding-bottom: 5px;
+}
+
+form {
+  margin-bottom: 25px;
+}
+
+form input[name="name"] {
+  width: 70%;
+  padding: 10px 12px;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  border: 1.5px solid #00ff99;
+  background-color: #222;
+  color: #e0e0e0;
+  transition: border-color 0.3s;
+}
+
+form input[name="name"]:focus {
+  outline: none;
+  border-color: #00cc7a;
+}
+
+form button {
+  background-color: #00ff99;
+  border: none;
+  color: #121212;
+  font-weight: 700;
+  font-size: 1.2rem;
+  padding: 10px 28px;
+  margin-left: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  vertical-align: middle;
+}
+
+form button:hover {
+  background-color: #00cc7a;
+}
+
+form[style] {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1a1a1a;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid #00ff99;
+}
+
+form[style] span {
+  color: #ccc;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+form[style] button {
+  font-size: 1rem;
+  padding: 6px 16px;
+  margin: 0;
+}

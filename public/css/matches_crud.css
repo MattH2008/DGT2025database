@@ -1,0 +1,146 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+header {
+  background-color: #1f1f1f;
+  padding: 20px;
+  text-align: center;
+  border-bottom: 2px solid #00ff99;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: #00ff99;
+}
+
+nav {
+  margin-top: 10px;
+}
+
+nav a {
+  color: #ffffff;
+  text-decoration: none;
+  margin: 0 15px;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+nav a:hover {
+  color: #00ff99;
+}
+
+main {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+h2 {
+  color: #00ff99;
+  font-size: 1.6rem;
+  margin-top: 30px;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #00ff99;
+  padding-bottom: 5px;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+form label {
+  flex: 1 1 45%;
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #c0f4d4;
+}
+
+form label input,
+form label select {
+  margin-top: 6px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1.5px solid #00ff99;
+  background-color: #222;
+  color: #e0e0e0;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+form label input:disabled,
+form label select:disabled {
+  background-color: #2a2a2a;
+  color: #666;
+  border-color: #444;
+  cursor: not-allowed;
+}
+
+form label input:focus:not(:disabled),
+form label select:focus:not(:disabled) {
+  outline: none;
+  border-color: #00cc7a;
+}
+
+button {
+  background-color: #00ff99;
+  border: none;
+  color: #121212;
+  font-weight: 700;
+  font-size: 1.2rem;
+  padding: 12px 30px;
+  margin-top: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  align-self: flex-start;
+}
+
+button:disabled {
+  background-color: #0f3f27;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background-color: #00cc7a;
+}
+
+#edit-match-select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1.5px solid #00ff99;
+  background-color: #222;
+  color: #e0e0e0;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  transition: border-color 0.3s;
+}
+
+#edit-match-select:focus {
+  outline: none;
+  border-color: #00cc7a;
+}
+
+form[style] span {
+  display: inline-block;
+  margin-right: 15px;
+  color: #ccc;
+  font-weight: 600;
+}
+
+form[style] button {
+  font-size: 1rem;
+  padding: 6px 16px;
+  margin-top: 0;
+  vertical-align: middle;
+}

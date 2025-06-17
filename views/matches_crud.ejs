@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Manage Matches</title>
+  <link rel="stylesheet" href="/css/matches_crud.css">
+</head>
+<body>
+  <header>
+    <h1>Manage Matches</h1>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/matches">Matches</a>
+      <a href="/crud">Manage</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Add Match</h2>
+    <form method="POST" action="/matches_crud/add">
+      <label>Team 1:
+        <select name="team1" required>
+          <% teams.forEach(team => { %>
+            <option value="<%= team.name %>"><%= team.name %></option>
+          <% }) %>
+        </select>
+      </label>
+      <label>Score 1:
+        <input type="number" name="score1" min="0" max="99" required />
+      </label>
+      <label>Team 2:
+        <select name="team2" required>
+          <% teams.forEach(team => { %>
+            <option value="<%= team.name %>"><%= team.name %></option>
+          <% }) %>
+        </select>
+      </label>
+      <label>Score 2:
+        <input type="number" name="score2" min="0" max="99" required />
+      </label>
+      <label>Date:
+        <input type="date" name="date" required />
+      </label>
+      <button type="submit">Add Match</button>
+    </form>
+
+    <h2>Edit Match</h2>
+    <select id="edit-match-select">
+      <option value="">Select Match</option>
+      <% matches.forEach(match => { %>
+        <option value="<%= match.id %>">
+          <%= match.team1 %> vs <%= match.team2 %> on <%= match.date %>
+        </option>
+      <% }) %>
+    </select>
+
+    <form id="edit-match-form" method="POST" action="/matches_crud/edit" style="margin-top: 1em;">
+      <input type="hidden" name="id" id="edit-id" />
+      <label>Team 1:
+        <select name="team1" id="edit-team1" disabled required>
+          <% teams.forEach(team => { %>
+            <option value="<%= team.name %>"><%= team.name %></option>
+          <% }) %>
+        </select>
+      </label>
+      <label>Score 1:
+        <input type="number" name="score1" id="edit-score1" min="0" max="99" disabled required />
+      </label>
+      <label>Team 2:
+        <select name="team2" id="edit-team2" disabled required>
+          <% teams.forEach(team => { %>
+            <option value="<%= team.name %>"><%= team.name %></option>
+          <% }) %>
+        </select>
+      </label>
+      <label>Score 2:
+        <input type="number" name="score2" id="edit-score2" min="0" max="99" disabled required />
+      </label>
+      <label>Date:
+        <input type="date" name="date" id="edit-date" disabled required />
+      </label>
+      <button type="submit" id="edit-submit" disabled>Update Match</button>
+    </form>
+
+    <h2>Delete Match</h2>
+    <% matches.forEach(match => { %>
+      <form method="POST" action="/matches_crud/delete/<%= match.id %>" style="margin-bottom: 0.5em;">
+        <span><%= match.team1 %> vs <%= match.team2 %> on <%= match.date %></span>
+        <button type="submit">Delete</button>
+      </form>
+    <% }) %>
+  </main>
+
+  <script>
+    const matchesData = {
+      <% matches.forEach(match => { %>
+        "<%= match.id %>": {
+          id: "<%= match.id %>",
+          team1: "<%= match.team1.replace(/"/g, '\\"') %>",
+          team2: "<%= match.team2.replace(/"/g, '\\"') %>",
+          score1: <%= match.score1 %>,
+          score2: <%= match.score2 %>,
+          date: "<%= match.date %>"
+        },
+      <% }) %>
+    };
+
+    const select = document.getElementById("edit-match-select");
+    const form = document.getElementById("edit-match-form");
+    const fields = ["team1", "team2", "score1", "score2", "date"];
+
+    select.addEventListener("change", function() {
+      const val = this.value;
+      if (!val || !matchesData[val]) {
+        fields.forEach(f => {
+          document.getElementById(`edit-${f}`).value = "";
+          document.getElementById(`edit-${f}`).disabled = true;
+        });
+        document.getElementById("edit-id").value = "";
+        document.getElementById("edit-submit").disabled = true;
+        return;
+      }
+      const match = matchesData[val];
+      document.getElementById("edit-id").value = match.id;
+      fields.forEach(f => {
+        document.getElementById(`edit-${f}`).value = match[f];
+        document.getElementById(`edit-${f}`).disabled = false;
+      });
+      document.getElementById("edit-submit").disabled = false;
+    });
+  </script>
+</body>
+</html>

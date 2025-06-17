@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/matches.css" />
+</head>
+<body>
+  <header>
+    <h1>Matches</h1>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/players">Players</a>
+      <a href="/matches">Matches</a>
+        <a href="/crud">Manage</a>
+    </nav>
+  </header>
+  <main>
+    <table>
+      <thead>
+        <tr>
+          <th>Team 1</th>
+          <th>Team 2</th>
+          <th>Scores</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% matches.forEach(match => { %>
+          <tr>
+            <td><%= match.team1 %></td>
+            <td><%= match.team2 %></td>
+            <td class="score-cell">
+              <div class="score-pair">
+                <span><%= match.score1 %></span>
+                <span>–</span>
+                <span><%= match.score2 %></span>
+              </div>
+            </td>
+            <td class="date-cell"><%= match.date %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

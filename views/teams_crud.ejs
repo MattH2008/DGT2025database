@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Manage Teams</title>
+  <link rel="stylesheet" href="/css/teams_crud.css">
+</head>
+<body>
+  <header>
+    <h1>Team Management</h1>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/crud">Manage</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Add New Team</h2>
+    <form method="POST" action="/teams_crud/add">
+      <input name="name" placeholder="Team Name" required />
+      <button type="submit">Add Team</button>
+    </form>
+
+    <h2>Existing Teams</h2>
+    <% if (teams.length === 0) { %>
+      <p>No teams added yet.</p>
+    <% } else { %>
+      <% teams.forEach(team => { %>
+        <form method="POST" action="/teams_crud/delete/<%= team.id %>" style="margin: 5px 0;">
+          <span><%= team.name %></span>
+          <button type="submit">Delete</button>
+        </form>
+      <% }) %>
+    <% } %>
+  </main>
+</body>
+</html>

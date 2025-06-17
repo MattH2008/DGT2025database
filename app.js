@@ -34,9 +34,7 @@ const db = new sqlite3.Database("./db/football.db", (err) => {
 
   db.run(`CREATE TABLE IF NOT EXISTS teams (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    manager TEXT,
-    stadium TEXT
+    name TEXT
   )`);
 });
 
@@ -52,7 +50,7 @@ app.get("/", (req, res) => {
   res.render("home", { title: "Home" });
 });
 
-// Players Leaderboards Page (now at /players)
+// Players Leaderboards Page
 app.get("/players", (req, res) => {
   const stats = ["goals", "assists", "touches", "dribbles", "passes"];
   const queries = stats.map(stat => {
@@ -86,19 +84,12 @@ app.get("/matches", (req, res) => {
   });
 });
 
-// Teams Page
-app.get("/teams", (req, res) => {
-  db.all("SELECT * FROM teams", (err, rows) => {
-    if (err) throw err;
-    res.render("teams", { title: "Teams", teams: rows });
-  });
-});
 
-// CRUD Page
-app.get("/crud", (req, res) => {
+// Players CRUD Page
+app.get("/players_crud", (req, res) => {
   db.all("SELECT * FROM players", (err, rows) => {
     if (err) throw err;
-    res.render("crud", { title: "Manage Players", players: rows });
+    res.render("players_crud", { title: "Manage Players", players: rows });
   });
 });
 
@@ -115,7 +106,7 @@ app.post("/crud/add", (req, res) => {
     [name, team, goals, assists, touches, dribbles, passes],
     (err) => {
       if (err) throw err;
-      res.redirect("/crud");
+      res.redirect("/players_crud");
     }
   );
 });
@@ -132,7 +123,7 @@ app.post("/crud/edit", (req, res) => {
     [name, team, goals, assists, touches, dribbles, passes, id],
     (err) => {
       if (err) throw err;
-      res.redirect("/crud");
+      res.redirect("/players_crud");
     }
   );
 });
@@ -142,8 +133,76 @@ app.post("/crud/delete/:id", (req, res) => {
   const id = req.params.id;
   db.run("DELETE FROM players WHERE id = ?", [id], (err) => {
     if (err) throw err;
-    res.redirect("/crud");
+    res.redirect("/players_crud");
   });
+});
+
+// General CRUD menu
+app.get("/crud", (req, res) => {
+  res.render("crud", { title: "Manage Data" });
+});
+
+// Teams CRUD
+app.get("/teams_crud", (req, res) => {
+  db.all("SELECT * FROM teams", (err, teams) => {
+    if (err) throw err;
+    res.render("teams_crud", { title: "Manage Teams", teams });
+  });
+});
+
+app.post("/teams_crud/add", (req, res) => {
+  const { name } = req.body;
+  db.run("INSERT INTO teams (name) VALUES (?)", [name], (err) => {
+    if (err) throw err;
+    res.redirect("/teams_crud");
+  });
+});
+
+app.post("/teams_crud/delete/:id", (req, res) => {
+  const id = req.params.id;
+  db.run("DELETE FROM teams WHERE id = ?", [id], (err) => {
+    if (err) throw err;
+    res.redirect("/teams_crud");
+  });
+});
+
+// Matches CRUD
+app.get("/matches_crud", (req, res) => {
+  db.all("SELECT * FROM teams", (err, teams) => {
+    if (err) throw err;
+    db.all("SELECT * FROM matches", (err2, matches) => {
+      if (err2) throw err2;
+      res.render("matches_crud", { title: "Manage Matches", teams, matches });
+    });
+  });
+});
+
+app.post("/matches_crud/add", (req, res) => {
+  const { team1, team2, date, score1, score2 } = req.body;
+  db.run(`INSERT INTO matches (team1, team2, date, score1, score2)
+          VALUES (?, ?, ?, ?, ?)`,
+    [team1, team2, date, score1, score2], (err) => {
+      if (err) throw err;
+      res.redirect("/matches_crud");
+    });
+});
+
+app.post("/matches_crud/delete/:id", (req, res) => {
+  const id = req.params.id;
+  db.run("DELETE FROM matches WHERE id = ?", [id], (err) => {
+    if (err) throw err;
+    res.redirect("/matches_crud");
+  });
+});
+
+app.post("/matches_crud/edit", (req, res) => {
+  const { id, team1, team2, date, score1, score2 } = req.body;
+  db.run(`UPDATE matches SET team1 = ?, team2 = ?, date = ?, score1 = ?, score2 = ?
+          WHERE id = ?`,
+    [team1, team2, date, score1, score2, id], (err) => {
+      if (err) throw err;
+      res.redirect("/matches_crud");
+    });
 });
 
 // Start server
