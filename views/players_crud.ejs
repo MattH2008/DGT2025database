@@ -17,12 +17,17 @@
     <h2>Add Player</h2>
     <form method="POST" action="/crud/add">
       <input name="name" placeholder="Name" required />
-      <input name="team" placeholder="Team" required />
-      <input name="goals" type="text" placeholder="Goals" maxlength="3" inputmode="numeric" pattern="\d{1,3}" title="Please enter a number between 0 and 999" />
-      <input name="assists" type="text" placeholder="Assists" maxlength="3" inputmode="numeric" pattern="\d{1,3}" title="Please enter a number between 0 and 999" />
-      <input name="touches" type="text" placeholder="Touches" maxlength="3" inputmode="numeric" pattern="\d{1,3}" title="Please enter a number between 0 and 999" />
-      <input name="dribbles" type="text" placeholder="Dribbles" maxlength="3" inputmode="numeric" pattern="\d{1,3}" title="Please enter a number between 0 and 999" />
-      <input name="passes" type="text" placeholder="Passes" maxlength="3" inputmode="numeric" pattern="\d{1,3}" title="Please enter a number between 0 and 999" />
+      <select name="team" required>
+        <option value="" disabled selected>Select Team</option>
+        <% teams.forEach(team => { %>
+          <option value="<%= team.name %>"><%= team.name %></option>
+        <% }) %>
+      </select>
+      <input name="goals" type="text" placeholder="Goals" maxlength="3" inputmode="numeric" pattern="\d{1,3}" />
+      <input name="assists" type="text" placeholder="Assists" maxlength="3" inputmode="numeric" pattern="\d{1,3}" />
+      <input name="touches" type="text" placeholder="Touches" maxlength="3" inputmode="numeric" pattern="\d{1,3}" />
+      <input name="dribbles" type="text" placeholder="Dribbles" maxlength="3" inputmode="numeric" pattern="\d{1,3}" />
+      <input name="passes" type="text" placeholder="Passes" maxlength="3" inputmode="numeric" pattern="\d{1,3}" />
       <button type="submit">Add Player</button>
     </form>
 
@@ -35,12 +40,16 @@
         <% }) %>
       </select><br />
       <input id="edit-name" name="name" placeholder="New Name" required disabled />
-      <input id="edit-team" name="team" placeholder="New Team" required disabled />
-      <input id="edit-goals" name="goals" type="text" placeholder="Goals" maxlength="3" inputmode="numeric" pattern="\d{1,3}" title="Please enter a number between 0 and 999" disabled />
-      <input id="edit-assists" name="assists" type="text" placeholder="Assists" maxlength="3" inputmode="numeric" pattern="\d{1,3}" title="Please enter a number between 0 and 999" disabled />
-      <input id="edit-touches" name="touches" type="text" placeholder="Touches" maxlength="3" inputmode="numeric" pattern="\d{1,3}" title="Please enter a number between 0 and 999" disabled />
-      <input id="edit-dribbles" name="dribbles" type="text" placeholder="Dribbles" maxlength="3" inputmode="numeric" pattern="\d{1,3}" title="Please enter a number between 0 and 999" disabled />
-      <input id="edit-passes" name="passes" type="text" placeholder="Passes" maxlength="3" inputmode="numeric" pattern="\d{1,3}" title="Please enter a number between 0 and 999" disabled />
+      <select id="edit-team" name="team" required disabled>
+        <% teams.forEach(team => { %>
+          <option value="<%= team.name %>"><%= team.name %></option>
+        <% }) %>
+      </select>
+      <input id="edit-goals" name="goals" type="text" placeholder="Goals" maxlength="3" inputmode="numeric" pattern="\d{1,3}" disabled />
+      <input id="edit-assists" name="assists" type="text" placeholder="Assists" maxlength="3" inputmode="numeric" pattern="\d{1,3}" disabled />
+      <input id="edit-touches" name="touches" type="text" placeholder="Touches" maxlength="3" inputmode="numeric" pattern="\d{1,3}" disabled />
+      <input id="edit-dribbles" name="dribbles" type="text" placeholder="Dribbles" maxlength="3" inputmode="numeric" pattern="\d{1,3}" disabled />
+      <input id="edit-passes" name="passes" type="text" placeholder="Passes" maxlength="3" inputmode="numeric" pattern="\d{1,3}" disabled />
       <button type="submit" id="edit-submit" disabled>Edit Player</button>
     </form>
 

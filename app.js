@@ -2,10 +2,18 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
+const session = require("express-session"); // ✅ NEW
 require("dotenv").config();
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+// ✅ Session middleware
+app.use(session({
+  secret: "secretStatzoneKey",
+  resave: false,
+  saveUninitialized: false
+}));
 
 // Set up database connection
 const db = new sqlite3.Database("./db/football.db", (err) => {
@@ -45,12 +53,37 @@ app.use(express.json());
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// Home Page
+// ✅ Login middleware
+function requireLogin(req, res, next) {
+  if (req.session.loggedIn) return next();
+  else res.redirect("/login");
+}
+
+// ✅ Login routes
+app.get("/login", (req, res) => {
+  res.render("login", { title: "Login", error: null });
+});
+
+app.post("/login", (req, res) => {
+  const { username, password } = req.body;
+  if (username === "admin" && password === "statzone") {
+    req.session.loggedIn = true;
+    res.redirect("/crud");
+  } else {
+    res.render("login", { title: "Login", error: "Invalid username or password" });
+  }
+});
+
+// ✅ Logout (optional)
+app.get("/logout", (req, res) => {
+  req.session.destroy(() => res.redirect("/"));
+});
+
+// Pages
 app.get("/", (req, res) => {
   res.render("home", { title: "Home" });
 });
 
-// Players Leaderboards Page
 app.get("/players", (req, res) => {
   const stats = ["goals", "assists", "touches", "dribbles", "passes"];
   const queries = stats.map(stat => {
@@ -76,7 +109,6 @@ app.get("/players", (req, res) => {
     });
 });
 
-// Matches Page
 app.get("/matches", (req, res) => {
   db.all("SELECT * FROM matches", (err, rows) => {
     if (err) throw err;
@@ -84,21 +116,27 @@ app.get("/matches", (req, res) => {
   });
 });
 
+// ✅ CRUD routes now protected
+app.get("/crud", requireLogin, (req, res) => {
+  res.render("crud", { title: "Manage Data" });
+});
 
-// Players CRUD Page
-app.get("/players_crud", (req, res) => {
-  db.all("SELECT * FROM players", (err, rows) => {
+app.get("/players_crud", requireLogin, (req, res) => {
+  db.all("SELECT * FROM players", (err, players) => {
     if (err) throw err;
-    res.render("players_crud", { title: "Manage Players", players: rows });
+    db.all("SELECT * FROM teams", (err2, teams) => {
+      if (err2) throw err2;
+      res.render("players_crud", {
+        title: "Manage Players",
+        players,
+        teams
+      });
+    });
   });
 });
 
-// Add Player
-app.post("/crud/add", (req, res) => {
-  const {
-    name, team, goals, assists, touches, dribbles, passes
-  } = req.body;
-
+app.post("/crud/add", requireLogin, (req, res) => {
+  const { name, team, goals, assists, touches, dribbles, passes } = req.body;
   db.run(
     `INSERT INTO players 
      (name, team, goals, assists, touches, dribbles, passes)
@@ -111,12 +149,8 @@ app.post("/crud/add", (req, res) => {
   );
 });
 
-// Edit Player
-app.post("/crud/edit", (req, res) => {
-  const {
-    id, name, team, goals, assists, touches, dribbles, passes
-  } = req.body;
-
+app.post("/crud/edit", requireLogin, (req, res) => {
+  const { id, name, team, goals, assists, touches, dribbles, passes } = req.body;
   db.run(`UPDATE players SET 
     name = ?, team = ?, goals = ?, assists = ?, touches = ?, 
     dribbles = ?, passes = ? WHERE id = ?`,
@@ -128,8 +162,7 @@ app.post("/crud/edit", (req, res) => {
   );
 });
 
-// Delete Player
-app.post("/crud/delete/:id", (req, res) => {
+app.post("/crud/delete/:id", requireLogin, (req, res) => {
   const id = req.params.id;
   db.run("DELETE FROM players WHERE id = ?", [id], (err) => {
     if (err) throw err;
@@ -137,20 +170,14 @@ app.post("/crud/delete/:id", (req, res) => {
   });
 });
 
-// General CRUD menu
-app.get("/crud", (req, res) => {
-  res.render("crud", { title: "Manage Data" });
-});
-
-// Teams CRUD
-app.get("/teams_crud", (req, res) => {
+app.get("/teams_crud", requireLogin, (req, res) => {
   db.all("SELECT * FROM teams", (err, teams) => {
     if (err) throw err;
     res.render("teams_crud", { title: "Manage Teams", teams });
   });
 });
 
-app.post("/teams_crud/add", (req, res) => {
+app.post("/teams_crud/add", requireLogin, (req, res) => {
   const { name } = req.body;
   db.run("INSERT INTO teams (name) VALUES (?)", [name], (err) => {
     if (err) throw err;
@@ -158,7 +185,7 @@ app.post("/teams_crud/add", (req, res) => {
   });
 });
 
-app.post("/teams_crud/delete/:id", (req, res) => {
+app.post("/teams_crud/delete/:id", requireLogin, (req, res) => {
   const id = req.params.id;
   db.run("DELETE FROM teams WHERE id = ?", [id], (err) => {
     if (err) throw err;
@@ -166,8 +193,7 @@ app.post("/teams_crud/delete/:id", (req, res) => {
   });
 });
 
-// Matches CRUD
-app.get("/matches_crud", (req, res) => {
+app.get("/matches_crud", requireLogin, (req, res) => {
   db.all("SELECT * FROM teams", (err, teams) => {
     if (err) throw err;
     db.all("SELECT * FROM matches", (err2, matches) => {
@@ -177,7 +203,7 @@ app.get("/matches_crud", (req, res) => {
   });
 });
 
-app.post("/matches_crud/add", (req, res) => {
+app.post("/matches_crud/add", requireLogin, (req, res) => {
   const { team1, team2, date, score1, score2 } = req.body;
   db.run(`INSERT INTO matches (team1, team2, date, score1, score2)
           VALUES (?, ?, ?, ?, ?)`,
@@ -187,7 +213,7 @@ app.post("/matches_crud/add", (req, res) => {
     });
 });
 
-app.post("/matches_crud/delete/:id", (req, res) => {
+app.post("/matches_crud/delete/:id", requireLogin, (req, res) => {
   const id = req.params.id;
   db.run("DELETE FROM matches WHERE id = ?", [id], (err) => {
     if (err) throw err;
@@ -195,7 +221,7 @@ app.post("/matches_crud/delete/:id", (req, res) => {
   });
 });
 
-app.post("/matches_crud/edit", (req, res) => {
+app.post("/matches_crud/edit", requireLogin, (req, res) => {
   const { id, team1, team2, date, score1, score2 } = req.body;
   db.run(`UPDATE matches SET team1 = ?, team2 = ?, date = ?, score1 = ?, score2 = ?
           WHERE id = ?`,
@@ -205,5 +231,4 @@ app.post("/matches_crud/edit", (req, res) => {
     });
 });
 
-// Start server
 app.listen(3000, () => console.log("✅ http://localhost:3000"));
