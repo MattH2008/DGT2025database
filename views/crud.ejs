@@ -1,27 +1,106 @@
 <!DOCTYPE html>
 <html>
-  <head><title>Manage Players</title></head>
-  <body>
-    <h1>Add Player</h1>
+<head>
+  <title>Manage Players</title>
+  <link rel="stylesheet" href="/css/crud.css">
+</head>
+<body>
+  <header>
+    <h1>Football Stats</h1>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/players">Players</a>
+      <a href="/crud">Manage</a>
+    </nav>
+  </header>
+  <main>
+    <h2>Add Player</h2>
     <form method="POST" action="/crud/add">
       <input name="name" placeholder="Name" required />
       <input name="team" placeholder="Team" required />
-      <input name="goals" placeholder="Goals" type="number" required />
-      <button type="submit">Add</button>
+      <input name="goals" type="text" placeholder="Goals" maxlength="3" inputmode="numeric" pattern="\d{1,3}" title="Please enter a number between 0 and 999" />
+      <input name="assists" type="text" placeholder="Assists" maxlength="3" inputmode="numeric" pattern="\d{1,3}" title="Please enter a number between 0 and 999" />
+      <input name="touches" type="text" placeholder="Touches" maxlength="3" inputmode="numeric" pattern="\d{1,3}" title="Please enter a number between 0 and 999" />
+      <input name="dribbles" type="text" placeholder="Dribbles" maxlength="3" inputmode="numeric" pattern="\d{1,3}" title="Please enter a number between 0 and 999" />
+      <input name="passes" type="text" placeholder="Passes" maxlength="3" inputmode="numeric" pattern="\d{1,3}" title="Please enter a number between 0 and 999" />
+      <button type="submit">Add Player</button>
     </form>
 
-    <h2>Current Players</h2>
-    <ul>
-      <% players.forEach(p => { %>
-        <li>
-          <%= p.name %> - <%= p.team %> - <%= p.goals %> goals
-          <form method="POST" action="/crud/delete/<%= p.id %>" style="display:inline;">
-            <button type="submit">Delete</button>
-          </form>
-        </li>
-      <% }) %>
-    </ul>
+    <h2>Edit Player</h2>
+    <form method="POST" action="/crud/edit">
+      <select id="edit-player-select" name="id" required>
+        <option value="">Select Player</option>
+        <% players.forEach(player => { %>
+          <option value="<%= player.id %>"><%= player.name %> — <%= player.team %></option>
+        <% }) %>
+      </select><br />
+      <input id="edit-name" name="name" placeholder="New Name" required />
+      <input id="edit-team" name="team" placeholder="New Team" required />
+      <input id="edit-goals" name="goals" type="text" placeholder="Goals" maxlength="3" inputmode="numeric" pattern="\d{1,3}" title="Please enter a number between 0 and 999" />
+      <input id="edit-assists" name="assists" type="text" placeholder="Assists" maxlength="3" inputmode="numeric" pattern="\d{1,3}" title="Please enter a number between 0 and 999" />
+      <input id="edit-touches" name="touches" type="text" placeholder="Touches" maxlength="3" inputmode="numeric" pattern="\d{1,3}" title="Please enter a number between 0 and 999" />
+      <input id="edit-dribbles" name="dribbles" type="text" placeholder="Dribbles" maxlength="3" inputmode="numeric" pattern="\d{1,3}" title="Please enter a number between 0 and 999" />
+      <input id="edit-passes" name="passes" type="text" placeholder="Passes" maxlength="3" inputmode="numeric" pattern="\d{1,3}" title="Please enter a number between 0 and 999" />
+      <button type="submit">Edit Player</button>
+    </form>
 
-    <a href="/">Back</a>
-  </body>
+    <h2>Delete Player</h2>
+    <% players.forEach(player => { %>
+      <form method="POST" action="/crud/delete/<%= player.id %>" style="display:inline-block; margin: 5px;">
+        <span><%= player.name %> — <%= player.team %></span>
+        <button type="submit">Delete</button>
+      </form><br>
+    <% }) %>
+  </main>
+
+  <script>
+    const playersData = {
+      <% players.forEach(player => { %>
+        "<%= player.id %>": {
+          name: "<%= player.name.replace(/"/g, '\\"') %>",
+          team: "<%= player.team.replace(/"/g, '\\"') %>",
+          goals: <%= player.goals || 0 %>,
+          assists: <%= player.assists || 0 %>,
+          touches: <%= player.touches || 0 %>,
+          dribbles: <%= player.dribbles || 0 %>,
+          passes: <%= player.passes || 0 %>,
+          interceptions: <%= player.interceptions || 0 %>,
+          tackles: <%= player.tackles || 0 %>,
+          clearances: <%= player.clearances || 0 %>
+        },
+      <% }) %>
+    };
+
+    const select = document.getElementById("edit-player-select");
+
+    select.addEventListener("change", function () {
+      const player = playersData[this.value];
+      if (!player) {
+        // Clear inputs if no player selected
+        document.getElementById("edit-name").value = "";
+        document.getElementById("edit-team").value = "";
+        document.getElementById("edit-goals").value = "";
+        document.getElementById("edit-assists").value = "";
+        document.getElementById("edit-touches").value = "";
+        document.getElementById("edit-dribbles").value = "";
+        document.getElementById("edit-passes").value = "";
+        document.getElementById("edit-interceptions").value = "";
+        document.getElementById("edit-tackles").value = "";
+        document.getElementById("edit-clearances").value = "";
+        return;
+      }
+      document.getElementById("edit-name").value = player.name;
+      document.getElementById("edit-team").value = player.team;
+      document.getElementById("edit-goals").value = player.goals;
+      document.getElementById("edit-assists").value = player.assists;
+      document.getElementById("edit-touches").value = player.touches;
+      document.getElementById("edit-dribbles").value = player.dribbles;
+      document.getElementById("edit-passes").value = player.passes;
+      document.getElementById("edit-interceptions").value = player.interceptions;
+      document.getElementById("edit-tackles").value = player.tackles;
+      document.getElementById("edit-clearances").value = player.clearances;
+    });
+  </script>
+
+</body>
 </html>

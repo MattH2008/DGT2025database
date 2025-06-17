@@ -1,13 +1,44 @@
 <!DOCTYPE html>
 <html>
-  <head><title>Players</title></head>
-  <body>
-    <h1>All Players</h1>
-    <ul>
-      <% players.forEach(player => { %>
-        <li><%= player.name %> - <%= player.team %> - <%= player.goals %> goals</li>
-      <% }) %>
-    </ul>
-    <a href="/">Back</a>
-  </body>
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/player.css">
+</head>
+<body>
+  <header>
+    <h1>Individual Stat Leaderboards</h1>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/players">All Players</a>
+      <a href="/crud">Manage</a>
+    </nav>
+  </header>
+  <main>
+    <% Object.entries(leaderboards).forEach(([stat, players]) => { %>
+      <section>
+        <h2>Top <%= stat.charAt(0).toUpperCase() + stat.slice(1) %></h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Name</th>
+              <th>Team</th>
+              <th><%= stat.charAt(0).toUpperCase() + stat.slice(1) %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% players.forEach((player, index) => { %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td><%= player.name %></td>
+                <td><%= player.team %></td>
+                <td><%= player[stat] || 0 %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </section>
+    <% }) %>
+  </main>
+</body>
 </html>
