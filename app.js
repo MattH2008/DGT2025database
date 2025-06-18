@@ -2,13 +2,11 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
-const session = require("express-session"); // ✅ NEW
+const session = require("express-session"); 
 require("dotenv").config();
 
 const app = express();
-const port = process.env.PORT || 5000;
 
-// ✅ Session middleware
 app.use(session({
   secret: "secretStatzoneKey",
   resave: false,
@@ -66,17 +64,28 @@ app.get("/login", (req, res) => {
 
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
+
+  if (!req.session.loginAttempts) {
+    req.session.loginAttempts = 0;
+  }
+
   if (username === "admin" && password === "statzone") {
     req.session.loggedIn = true;
-    res.redirect("/crud");
+    req.session.loginAttempts = 0;
+    return res.redirect("/crud");
   } else {
-    res.render("login", { title: "Login", error: "Invalid username or password" });
-  }
-});
+    req.session.loginAttempts += 1;
 
-// ✅ Logout (optional)
-app.get("/logout", (req, res) => {
-  req.session.destroy(() => res.redirect("/"));
+    if (req.session.loginAttempts >= 3) {
+      req.session.loginAttempts = 0;
+      return res.redirect("/");
+    }
+
+    return res.render("login", {
+      title: "Login",
+      error: `Invalid username or password. Attempts left: ${3 - req.session.loginAttempts}`
+    });
+  }
 });
 
 // Pages
@@ -116,7 +125,6 @@ app.get("/matches", (req, res) => {
   });
 });
 
-// ✅ CRUD routes now protected
 app.get("/crud", requireLogin, (req, res) => {
   res.render("crud", { title: "Manage Data" });
 });
@@ -205,6 +213,13 @@ app.get("/matches_crud", requireLogin, (req, res) => {
 
 app.post("/matches_crud/add", requireLogin, (req, res) => {
   const { team1, team2, date, score1, score2 } = req.body;
+
+  // ✅ Server-side date format validation (YYYY-MM-DD with 4-digit year)
+  const validDateFormat = /^\d{4}-\d{2}-\d{2}$/;
+  if (!validDateFormat.test(date)) {
+    return res.status(400).send("Invalid date format. Use YYYY-MM-DD with a 4-digit year.");
+  }
+
   db.run(`INSERT INTO matches (team1, team2, date, score1, score2)
           VALUES (?, ?, ?, ?, ?)`,
     [team1, team2, date, score1, score2], (err) => {
@@ -223,6 +238,12 @@ app.post("/matches_crud/delete/:id", requireLogin, (req, res) => {
 
 app.post("/matches_crud/edit", requireLogin, (req, res) => {
   const { id, team1, team2, date, score1, score2 } = req.body;
+
+  const validDateFormat = /^\d{4}-\d{2}-\d{2}$/;
+  if (!validDateFormat.test(date)) {
+    return res.status(400).send("Invalid date format. Use YYYY-MM-DD with a 4-digit year.");
+  }
+
   db.run(`UPDATE matches SET team1 = ?, team2 = ?, date = ?, score1 = ?, score2 = ?
           WHERE id = ?`,
     [team1, team2, date, score1, score2, id], (err) => {

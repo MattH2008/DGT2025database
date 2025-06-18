@@ -5,16 +5,18 @@
   <link rel="stylesheet" href="/css/login.css">
 </head>
 <body>
-  <main>
+  <div class="login-container">
     <h2>Admin Login</h2>
+
     <% if (error) { %>
-      <p style="color:red;"><%= error %></p>
+      <p class="error-message"><%= error %></p>
     <% } %>
+
     <form method="POST" action="/login">
-      <input name="username" placeholder="Username" required />
-      <input name="password" type="password" placeholder="Password" required />
+      <input type="text"     name="username" placeholder="Username" required />
+      <input type="password" name="password" placeholder="Password" required />
       <button type="submit">Login</button>
     </form>
-  </main>
+  </div>
 </body>
 </html>
