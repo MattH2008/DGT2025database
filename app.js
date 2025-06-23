@@ -69,7 +69,7 @@ app.post("/login", (req, res) => {
     req.session.loginAttempts = 0;
   }
 
-  if (username === "admin" && password === "statzone") {
+  if (username === "admin" && password === "statszone123") {
     req.session.loggedIn = true;
     req.session.loginAttempts = 0;
     return res.redirect("/crud");
